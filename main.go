@@ -72,6 +72,23 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	}{Error: "Book not found"})
 }
 
+// Patch a book
+func patchBook(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, book := range books {
+		if book.ID == params["id"] {
+			_ = json.NewDecoder(r.Body).Decode(&books[index])
+			json.NewEncoder(w).Encode(books[index])
+			return
+		}
+	}
+	w.WriteHeader(404)
+	json.NewEncoder(w).Encode(&struct {
+		Error string `json:"error"`
+	}{Error: "Book not found"})
+}
+
 // Delete a book
 func deleteBook(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -102,5 +119,6 @@ func main() {
 	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
+	r.HandleFunc("/api/books/{id}", patchBook).Methods("PATCH")
 	http.ListenAndServe(":8000", r)
 }
