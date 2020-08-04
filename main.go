@@ -39,6 +39,7 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	w.WriteHeader(404)
 	json.NewEncoder(w).Encode(&struct {
 		Error string `json:"error"`
 	}{Error: "Book not found"})
@@ -65,6 +66,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	w.WriteHeader(404)
 	json.NewEncoder(w).Encode(&struct {
 		Error string `json:"error"`
 	}{Error: "Book not found"})
