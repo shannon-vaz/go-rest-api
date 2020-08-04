@@ -96,10 +96,14 @@ func deleteBook(w http.ResponseWriter, r *http.Request) {
 	for index, book := range books {
 		if book.ID == params["id"] {
 			books = append(books[:index], books[index+1:]...)
-			break
+			json.NewEncoder(w).Encode(book)
+			return
 		}
 	}
-	json.NewEncoder(w).Encode(books)
+	w.WriteHeader(404)
+	json.NewEncoder(w).Encode(&struct {
+		Error string `json:"error"`
+	}{Error: "Book not found"})
 }
 
 // Init books var as a slice Book struct
